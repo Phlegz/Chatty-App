@@ -1,28 +1,32 @@
-import React, {Component} from 'react';
-import MessageList from './MessageList.jsx';
-import ChatBar from './ChatBar.jsx';
-const data = {
-  currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-  messages: [
-    {
-      id: 1,
-      username: "Bob",
-      content: "Has anyone seen my marbles?",
-    },
-    {
-      id: 2,
-      username: "Anonymous",
-      content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-    }
-  ]
-};
+import React, {Component} from "react";
+import MessageList from "./MessageList.jsx";
+import ChatBar from "./ChatBar.jsx";
 
 class App extends Component {
+
   constructor(props) {
     super(props);
     this.state = data;
     this.newMessage = this.newMessage.bind(this);
+  }
 
+  newMessage(username = "Anonymous", content) {
+    const previousUser = this.state.currentUser.name || "Anonymous";
+    if (username !== previousUser) {
+      const nameChangeMessage = {
+        username,
+        content: `${previousUser} changed their name to ${username}`,
+        type: "postNotification"
+      };
+      this.setState({currentUser: {name: username}});
+      this.ws.send(JSON.stringify(nameChangeMessage));
+    }
+    const newMessage = {
+      username,
+      content,
+      type: "postMessage"
+    };
+    this.ws.send(JSON.stringify(newMessage));
   }
 
   newMessage(username, content) {
@@ -37,13 +41,13 @@ class App extends Component {
       <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
+          <span className="user-num-section">Total users in channel:{ this.state.userNum }</span>
         </nav>
-        <MessageList messages = { this.state.messages } />
-        <ChatBar
-          // user = { this.state.currentUser }
-          newMessage = { this.newMessage }/>
+        <MessageList messages={ this.state.messages } />
+        <ChatBar newMessage={ this.newMessage } />
       </div>
     );
   }
+
 }
 export default App;

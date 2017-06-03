@@ -1,18 +1,31 @@
-import React, {Component} from 'react';
+import React, {Component} from "react";
 
 class Message extends Component {
-  render() {
-    return (
-      // <main className="messages">
-        <div className="message">
-          <span className="message-username">{this.props.username}</span>
-          <span className="message-content">{this.props.content}</span>
-        </div>
-        // {/* <div className="message system"> */}
-          // Anonymous1 changed their name to nomnom.
-        // </div>
-      // </main>
-    );
+//TODO break into seperate components
+  parseType() {
+    const { username, content, type, color } = this.props;
+    switch(type) {
+      case "postNotification":
+        return (
+          <div className="message system">
+            {content}
+          </div>
+        );
+        break;
+      case "postMessage":
+        return (
+          <div className="message">
+            <span className="message-username" style={{color}}>{username}</span>
+            <span className="message-content">{content}</span>
+          </div>
+        );
+        break;
+    }
   }
+
+  render() {
+    return (this.parseType());
+  }
+
 }
 export default Message;

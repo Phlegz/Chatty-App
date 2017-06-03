@@ -1,13 +1,13 @@
-import React, {Component} from 'react';
+import React, {Component} from "react";
 
 class ChatBar extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
-      content: ''
-    }
+      username: "",
+      content: ""
+    };
     this.onContent = this.onContent.bind(this);
     this.onEnter = this.onEnter.bind(this);
     this.onNameChange = this.onNameChange.bind(this);
@@ -25,14 +25,12 @@ class ChatBar extends Component {
     });
   }
 
-  onEnter(e) {
-    if (e.key === 'Enter') {
-      const length = this.state.content.length;
-      if (length > 0) {
-        this.props.newMessage(this.state.username,this.state.content);
-        const state = this.state.content = '';
-        this.setState({state:state});
-      }
+  onEnter(event) {
+    const { content, username } = this.state;
+    if (!content.trim()) return;
+    if (event.key === "Enter") {
+      this.props.newMessage(username, content);
+      this.setState({content:""});
     }
   }
 
@@ -40,12 +38,14 @@ class ChatBar extends Component {
     return (
       <footer className="chatbar">
         <input className="chatbar-username" placeholder="Your Name (Optional)"
-          onChange={this.onNameChange} value={this.state.username} />
+          onChange={ this.onNameChange }
+          value={ this.state.username }
+        />
         <input className="chatbar-message"
           placeholder="Type a message and hit ENTER"
           onChange={ this.onContent }
-          onKeyDown={this.onEnter}
-          value = {this.state.content}
+          onKeyDown={ this.onEnter } //TODO define a function that checks if "enter" and then call onEnter
+          value={ this.state.content }
          />
       </footer>
     );
