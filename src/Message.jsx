@@ -20,6 +20,14 @@ class Message extends Component {
           </div>
         );
         break;
+      case "imageMessage":
+        return (
+          <div className="message">
+            <span className="message-username" style={{color:`${color}`}}>{username}</span>
+            <img src={content} />
+          </div>
+        );
+        break;
     }
   }
 
