@@ -6,7 +6,11 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = data;
+    this.state = {
+      currentUser: {name:""},
+      messages: [],
+      userNum: 0,
+    };
     this.newMessage = this.newMessage.bind(this);
   }
 
@@ -29,11 +33,21 @@ class App extends Component {
     this.ws.send(JSON.stringify(newMessage));
   }
 
-  newMessage(username, content) {
-    // console.log(content);
-    this.setState({
-      messages: this.state.messages.concat({id: this.state.messages.length+1, username: username || this.state.currentUser.name, content:content}),
-    })
+  componentDidMount() {
+    const ws = new WebSocket(`ws://${window.location.hostname}:3001`);
+    this.ws = ws;
+    ws.onopen = (event => {
+      console.log("connection establishded");
+      ws.onmessage = (({ data }) => {
+        const parsedData = JSON.parse(data);
+        if (parsedData.type === "userNumNotification") {
+          this.setState({userNum: parsedData.num});
+        } else {
+          const messages = this.state.messages.concat(parsedData);
+          this.setState({messages});
+        }
+      });
+    });
   }
 
   render() {
